@@ -52,8 +52,7 @@ final class TestOutcomesSynchronization: XCTestCase {
 
         let nauseaOutcome = nauseaEvents.first!.outcome
         XCTAssert(nauseaOutcome != nil)
-        XCTAssert(nauseaOutcome!.values.count == 5)
-        
+        XCTAssertEqual(nauseaOutcome!.values.count, 5)
     }
 }
 
