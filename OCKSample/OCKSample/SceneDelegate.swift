@@ -41,7 +41,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let manager = appDelegate.synchronizedStoreManager
-        let careViewController = UINavigationController(rootViewController: CareViewController(storeManager: manager))
+        let dailyTasksViewController = UINavigationController(rootViewController: OCKDailyTasksPageViewController(storeManager: manager))
 
         let permissionViewController = UIViewController()
         permissionViewController.view.backgroundColor = .white
@@ -54,7 +54,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 appDelegate.healthKitStore.requestHealthKitPermissionsForAllTasksInStore { _ in
                     DispatchQueue.main.async {
-                        self.window?.rootViewController = careViewController
+                        self.window?.rootViewController = dailyTasksViewController
                     }
                 }
             }
