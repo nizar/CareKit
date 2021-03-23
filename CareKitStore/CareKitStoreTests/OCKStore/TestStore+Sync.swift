@@ -159,7 +159,6 @@ final class TestStoreSynchronization: XCTestCase {
         let thisMorning = Calendar.current.startOfDay(for: Date())
         let aFewDaysAgo = Calendar.current.date(byAdding: .day, value: -4, to: thisMorning)!
         let beforeBreakfast = Calendar.current.date(byAdding: .hour, value: 8, to: aFewDaysAgo)!
-//        let afterLunch = Calendar.current.date(byAdding: .hour, value: 14, to: aFewDaysAgo)!
         let nauseaSchedule = OCKSchedule(composing: [
             OCKScheduleElement(start: beforeBreakfast, end: nil, interval: DateComponents(day: 1),
                                text: "Anytime throughout the day", targetValues: [], duration: .allDay)
@@ -188,23 +187,30 @@ final class TestStoreSynchronization: XCTestCase {
                 let outcome = OCKOutcome(taskUUID: task.uuid, taskOccurrenceIndex: event.scheduleEvent.occurrence, values: [value])
                 try store.addOutcomeAndWait(outcome)
             }
-            try store.syncAndWait()
         }
-
     }
     
     func verifyStore(store: OCKStore) throws {
-        XCTAssert(try! store.fetchTasksAndWait().count == 1)
+        XCTAssertEqual(try! store.fetchTasksAndWait().count, 1)
 
         let nausea = try! store.fetchTasksAndWait(query: .init(id: "nausea")).first!
         let nauseaEvents = try store.fetchEventsAndWait(taskID: nausea.id, query: .init(for: Date()))
         let nauseaOutcome = nauseaEvents.first!.outcome
-        XCTAssert(nauseaEvents.count == 1)
+        XCTAssertEqual(nauseaEvents.count, 1)
         XCTAssert(nauseaOutcome != nil)
         XCTAssertEqual(nauseaOutcome!.values.count, 5)
+        
+        var outcomeQuery = OCKOutcomeQuery(for: Date())
+        outcomeQuery.taskIDs = ["nausea"]
+        let outcomes = try store.fetchOutcomesAndWait(query: outcomeQuery)
+        
+        for index in 1..<outcomes.count {
+            XCTAssert(outcomes[index-1].updatedDate! < outcomes[index].updatedDate!)
+        }
+
     }
     
-    func testFoo() throws {
+    func testOutcomeVersionAreSyncdInCorrectOrder() throws {
 
         // 1. Setup the a server with two sync'd stores
         let server = SimulatedServer()
@@ -216,11 +222,13 @@ final class TestStoreSynchronization: XCTestCase {
         // 3. Populate with a task and outcomes
         try addTask(store: storeA)
         try addOutcomes(store: storeA, taskId: "nausea")
-        try storeA.syncAndWait()
-        
+
         // 4. Verify task and events are set up
         try verifyStore(store: storeA)
 
+        // 5. Sync store to remote
+        try storeA.syncAndWait()
+        
         // 6. Setup new remote and store
         let remoteB = SimulatedRemote(name: "B", server: server)
         let storeB = OCKStore(name: "B", type: .inMemory, remote: remoteB)
@@ -230,7 +238,6 @@ final class TestStoreSynchronization: XCTestCase {
         
         // 8. Verify task and events match
         try verifyStore(store: storeB)
-
     }
 }
 
