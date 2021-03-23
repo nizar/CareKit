@@ -154,6 +154,91 @@ final class TestStoreSynchronization: XCTestCase {
         XCTAssert(finalRevisionStamp == server.revisions.last?.stamp)
         XCTAssert(server.revisions.count == 3)
     }
+
+    func addTask(store: OCKStore) throws {
+        let thisMorning = Calendar.current.startOfDay(for: Date())
+        let aFewDaysAgo = Calendar.current.date(byAdding: .day, value: -4, to: thisMorning)!
+        let beforeBreakfast = Calendar.current.date(byAdding: .hour, value: 8, to: aFewDaysAgo)!
+        let nauseaSchedule = OCKSchedule(composing: [
+            OCKScheduleElement(start: beforeBreakfast, end: nil, interval: DateComponents(day: 1),
+                               text: "Anytime throughout the day", targetValues: [], duration: .allDay)
+            ])
+        var nausea = OCKTask(id: "nausea", title: "Track your nausea",
+                             carePlanUUID: nil, schedule: nauseaSchedule)
+        nausea.impactsAdherence = false
+        nausea.instructions = "Tap the button below anytime you experience nausea."
+        try store.addTasksAndWait([nausea])
+        
+    }
+    
+    func addOutcomes(store: OCKStore, taskId: String) throws {
+        for _ in 1...5 {
+            let task = try store.fetchTasksAndWait(query: .init(id: "nausea")).first!
+            let event = try store.fetchEventsAndWait(taskID: task.id, query: .init(for: Date())).first!
+
+            let value = OCKOutcomeValue(true)
+            // Update the outcome with the new value
+
+            if var outcome = event.outcome {
+                outcome.values.append(value)
+                try store.updateOutcomeAndWait(outcome)
+            // Else Save a new outcome if one does not exist
+            } else {
+                let outcome = OCKOutcome(taskUUID: task.uuid, taskOccurrenceIndex: event.scheduleEvent.occurrence, values: [value])
+                try store.addOutcomeAndWait(outcome)
+            }
+        }
+    }
+    
+    func verifyStore(store: OCKStore) throws {
+        XCTAssertEqual(try! store.fetchTasksAndWait().count, 1)
+
+        let nausea = try! store.fetchTasksAndWait(query: .init(id: "nausea")).first!
+        let nauseaEvents = try store.fetchEventsAndWait(taskID: nausea.id, query: .init(for: Date()))
+        let nauseaOutcome = nauseaEvents.first!.outcome
+        XCTAssertEqual(nauseaEvents.count, 1)
+        XCTAssert(nauseaOutcome != nil)
+        XCTAssertEqual(nauseaOutcome!.values.count, 5)
+        
+        var outcomeQuery = OCKOutcomeQuery(for: Date())
+        outcomeQuery.taskIDs = ["nausea"]
+        let outcomes = try store.fetchOutcomesAndWait(query: outcomeQuery)
+        
+        for index in 1..<outcomes.count {
+            XCTAssert(outcomes[index-1].updatedDate! < outcomes[index].updatedDate!)
+        }
+
+    }
+    
+    func testOutcomeVersionAreSyncdInCorrectOrder() throws {
+
+        // 1. Setup the a server with two sync'd stores
+        let server = SimulatedServer()
+
+        // 2. Setup the a remote and store
+        let remoteA = SimulatedRemote(name: "A", server: server)
+        let storeA = OCKStore(name: "A", type: .inMemory, remote: remoteA)
+
+        // 3. Populate with a task and outcomes
+        try addTask(store: storeA)
+        try addOutcomes(store: storeA, taskId: "nausea")
+
+        // 4. Verify task and events are set up
+        try verifyStore(store: storeA)
+
+        // 5. Sync store to remote
+        try storeA.syncAndWait()
+        
+        // 6. Setup new remote and store
+        let remoteB = SimulatedRemote(name: "B", server: server)
+        let storeB = OCKStore(name: "B", type: .inMemory, remote: remoteB)
+        
+        // 7. Sync new store
+        try storeB.syncAndWait()
+        
+        // 8. Verify task and events match
+        try verifyStore(store: storeB)
+    }
 }
 
 private final class SimulatedServer {

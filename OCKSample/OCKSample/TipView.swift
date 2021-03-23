@@ -31,6 +31,7 @@
 import UIKit
 import CareKit
 import CareKitUI
+import SwiftUI
 
 class TipView: OCKView, OCKCardable {
 
@@ -113,5 +114,13 @@ class TipView: OCKView, OCKCardable {
         let cachedStyle = style()
         enableCardStyling(true, style: cachedStyle)
         directionalLayoutMargins = cachedStyle.dimension.directionalInsets1
+    }
+}
+
+private extension View {
+    func formattedHostingController() -> UIHostingController<Self> {
+        let viewController = UIHostingController(rootView: self)
+        viewController.view.backgroundColor = .clear
+        return viewController
     }
 }

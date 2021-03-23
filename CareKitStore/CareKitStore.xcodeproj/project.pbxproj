@@ -186,6 +186,7 @@
 		51178DF023AA94DA0068BAB1 /* OCKAdherenceAggregator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77140E822C3090200D1BC36 /* OCKAdherenceAggregator.swift */; };
 		51178DF123AA94DA0068BAB1 /* OCKUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03ABAAB723146772001FCACE /* OCKUtilities.swift */; };
 		5121407D240043E200B035F6 /* TestEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5121407C240043E200B035F6 /* TestEvent.swift */; };
+		7971D2C5260176F400F332D0 /* TestStore+OutcomesSynchronization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7971D2C4260176F400F332D0 /* TestStore+OutcomesSynchronization.swift */; };
 		E7131DC12241FAA80001861B /* OCKTaskQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7131DC02241FAA80001861B /* OCKTaskQuery.swift */; };
 		E7131DC5224200640001861B /* OCKOutcomeQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7131DC4224200640001861B /* OCKOutcomeQuery.swift */; };
 		E7131DCB22420A520001861B /* OCKPatientQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7131DCA22420A520001861B /* OCKPatientQuery.swift */; };
@@ -344,6 +345,7 @@
 		05A6B74D237F4A94009D7D1F /* CareKitStore.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = CareKitStore.xctestplan; sourceTree = "<group>"; };
 		5121407C240043E200B035F6 /* TestEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEvent.swift; sourceTree = "<group>"; };
 		515862D423A9C5BA00630AB5 /* CareKitStore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CareKitStore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7971D2C4260176F400F332D0 /* TestStore+OutcomesSynchronization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TestStore+OutcomesSynchronization.swift"; sourceTree = "<group>"; };
 		E7131DC02241FAA80001861B /* OCKTaskQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCKTaskQuery.swift; sourceTree = "<group>"; };
 		E7131DC4224200640001861B /* OCKOutcomeQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCKOutcomeQuery.swift; sourceTree = "<group>"; };
 		E7131DCA22420A520001861B /* OCKPatientQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCKPatientQuery.swift; sourceTree = "<group>"; };
@@ -759,6 +761,7 @@
 		E7F445E022CFAC6F0090CC36 /* OCKStore */ = {
 			isa = PBXGroup;
 			children = (
+				7971D2C4260176F400F332D0 /* TestStore+OutcomesSynchronization.swift */,
 				03D40831240D87CC0033C09E /* TestStore.swift */,
 				E726C04B22CFADCD001236E2 /* TestStore+Patients.swift */,
 				E726C04D22CFADDE001236E2 /* TestStore+CarePlans.swift */,
@@ -1161,6 +1164,7 @@
 				5121407D240043E200B035F6 /* TestEvent.swift in Sources */,
 				E7E793D4225F9B53004BDD21 /* TestStoreProtocolExtensions.swift in Sources */,
 				E7A532AC22C59D7700D1D112 /* TestAdherenceAggregator.swift in Sources */,
+				7971D2C5260176F400F332D0 /* TestStore+OutcomesSynchronization.swift in Sources */,
 				035FE1772343F1DF00851723 /* TestOutcome.swift in Sources */,
 				035FE17F23451DB100851723 /* TestCarePlan.swift in Sources */,
 				03CF3603230DCE6600A66A38 /* TestSemanticVersion.swift in Sources */,
