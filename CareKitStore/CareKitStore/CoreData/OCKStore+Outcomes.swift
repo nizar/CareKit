@@ -165,6 +165,6 @@ extension OCKStore {
             switch order {
             case .date(let ascending): return NSSortDescriptor(keyPath: \OCKCDOutcome.startDate, ascending: ascending)
             }
-        } + [NSSortDescriptor(keyPath: \OCKCDObject.updatedDate, ascending: true)]
+        } + query.defaultSortDescriptors() + [NSSortDescriptor(keyPath: \OCKCDObject.updatedDate, ascending: true)]
     }
 }
