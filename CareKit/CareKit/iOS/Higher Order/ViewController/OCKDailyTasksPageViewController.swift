@@ -60,9 +60,13 @@ open class OCKDailyTasksPageViewController: OCKDailyPageViewController, OCKDaily
 
     // MARK: - Life Cycle
 
+    override public init(storeManager: OCKSynchronizedStoreManager, adherenceAggregator: OCKAdherenceAggregator = .compareTargetValues) {
+        super.init(storeManager: storeManager, adherenceAggregator: adherenceAggregator)
+        tasksDelegate = self
+    }
+    
     override open func viewDidLoad() {
         super.viewDidLoad()
-        tasksDelegate = self
     }
 
     // MARK: - Methods
