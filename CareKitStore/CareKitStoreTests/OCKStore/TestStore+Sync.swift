@@ -171,14 +171,18 @@ final class TestStoreSynchronization: XCTestCase {
         
     }
     
+    // Add one outcome and update four times
     func addOutcomes(store: OCKStore, taskId: String) throws {
+        var outcomeValue = true
+
         for _ in 1...5 {
             let task = try store.fetchTasksAndWait(query: .init(id: "nausea")).first!
             let event = try store.fetchEventsAndWait(taskID: task.id, query: .init(for: Date())).first!
 
-            let value = OCKOutcomeValue(true)
-            // Update the outcome with the new value
+            let value = OCKOutcomeValue(outcomeValue)
+            outcomeValue.toggle()
 
+            // Update the outcome with the new value
             if var outcome = event.outcome {
                 outcome.values.append(value)
                 try store.updateOutcomeAndWait(outcome)
@@ -188,6 +192,21 @@ final class TestStoreSynchronization: XCTestCase {
                 try store.addOutcomeAndWait(outcome)
             }
         }
+    }
+    
+    func testNumberOfOutcomesIsOneAfterUpdates() throws {
+        // 1. Set up store
+        let storeA = OCKStore(name: "A", type: .inMemory)
+
+        // 2. Populate with a task and outcomes
+        try addTask(store: storeA)
+        try addOutcomes(store: storeA, taskId: "nausea")
+
+        // 4. Verify task and events are set up
+        var outcomeQuery = OCKOutcomeQuery(for: Date())
+        outcomeQuery.taskIDs = ["nausea"]
+        let outcomes = try storeA.fetchOutcomesAndWait(query: outcomeQuery)
+        XCTAssertEqual(outcomes.count, 1)
     }
     
     func verifyStore(store: OCKStore) throws {
