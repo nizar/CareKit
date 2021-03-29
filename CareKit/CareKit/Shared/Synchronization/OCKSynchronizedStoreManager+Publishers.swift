@@ -32,7 +32,7 @@ import CareKitStore
 import Combine
 import Foundation
 
-extension OCKSynchronizedStoreManager {
+public extension OCKSynchronizedStoreManager {
 
     // MARK: Patients
 
