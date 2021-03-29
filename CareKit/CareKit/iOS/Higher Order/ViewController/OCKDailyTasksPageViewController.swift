@@ -134,6 +134,8 @@ open class OCKDailyTasksPageViewController: OCKDailyPageViewController, OCKDaily
     open func dailyTasksPageViewController(_ viewController: OCKDailyTasksPageViewController, viewControllerForTask task: OCKAnyTask,
                                            events: [OCKAnyEvent], eventQuery: OCKEventQuery) -> UIViewController? {
 
+        guard events.count > 0 else { return nil }
+        
         // If the task is linked to HealthKit, show a view geared towards displaying HealthKit data
         if #available(iOS 14, *), task is OCKHealthKitTask {
             let controller = OCKNumericProgressTaskController(storeManager: storeManager)
