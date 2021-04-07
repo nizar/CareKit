@@ -37,7 +37,10 @@ import HealthKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    lazy private(set) var coreDataStore = OCKStore(name: "SampleAppStore", type: .inMemory)
+    lazy private(set) var simulatedServer = SimulatedServer()
+    lazy private(set) var simulatedRemote = SimulatedRemote(name: "SampleAppRemote", server: simulatedServer)
+    
+    lazy private(set) var coreDataStore = OCKStore(name: "SampleAppStore", type: .inMemory, remote: simulatedRemote)
 
     lazy private(set) var healthKitStore = OCKHealthKitPassthroughStore(store: coreDataStore)
 
